@@ -404,7 +404,7 @@ function drawBoard() {
         const drawY = currentPiece.y + y;
 
         if (drawY >= 0) {
-          drawFallingPowderCell(drawX, drawY, currentPiece.color);
+          drawCell(drawX, drawY, currentPiece.color);
         }
       });
     });
