@@ -164,8 +164,6 @@ function createPowder(boardX, boardY, color, particleCount = 180, persistent = t
       size,
       color,
       life: 1,
-      // Keep the entire particle inside the board so it visibly reaches its floor.
-      floorY: canvas.height - size - 1,
       persistent,
       cellX: boardX,
       cellY: boardY,
@@ -189,7 +187,8 @@ function updatePowder() {
       return;
     }
 
-    particle.vy += 0.18;
+    // Sand should drop decisively to the bottom of the playfield.
+    particle.vy += 0.42;
     particle.x += particle.vx;
     particle.y += particle.vy;
 
@@ -201,15 +200,14 @@ function updatePowder() {
       particle.vx *= -0.45;
     }
 
-    if (particle.y >= particle.floorY) {
-      particle.y = particle.floorY;
-      particle.vy *= -0.28;
-      particle.vx *= 0.82;
-
-      if (Math.abs(particle.vy) < 0.35) {
-        particle.settled = true;
-        particle.life = 1;
-      }
+    const floorY = canvas.height - particle.size;
+    if (particle.y >= floorY) {
+      // Stop at the actual canvas edge—no bounce or partially clipped particles.
+      particle.y = floorY;
+      particle.vy = 0;
+      particle.vx *= 0.72;
+      particle.settled = true;
+      particle.life = 1;
     }
   });
 }
