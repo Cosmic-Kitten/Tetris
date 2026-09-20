@@ -15,15 +15,22 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
+html, body {
+  width: 100%;
+  height: 100%;
   margin: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+body {
   min-height: 100dvh;
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, #0f172a, #111827 35%, #1e293b);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
-  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+  padding: max(0.75rem, env(safe-area-inset-top)) 0.75rem max(0.75rem, env(safe-area-inset-bottom));
 }
 
 .game-shell {
@@ -36,6 +43,8 @@ body {
   padding: 1.25rem;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
   width: min(100%, 620px);
+  max-height: calc(100dvh - 1.5rem);
+  overflow: hidden;
 }
 
 .board-wrap {
@@ -158,13 +167,14 @@ button:active {
 
 @media (max-width: 640px) {
   body {
-    padding-top: max(0.5rem, env(safe-area-inset-top));
+    padding: max(0.25rem, env(safe-area-inset-top)) 0.25rem max(0.25rem, env(safe-area-inset-bottom));
   }
 
   .game-shell {
     flex-direction: column;
-    padding: 0.9rem;
+    padding: 0.75rem;
     width: min(100%, 400px);
+    max-height: calc(100dvh - 0.5rem);
   }
 
   .side-panel {
@@ -177,5 +187,20 @@ button:active {
 
   .mobile-controls {
     display: grid;
+    margin-top: 0.75rem;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .stats {
+    gap: 0.45rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .stat {
+    padding: 0.45rem 0.6rem;
   }
 }
