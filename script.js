@@ -52,6 +52,7 @@ let gameOver = false;
 let lastDropAt = 0;
 let dropInterval = 650;
 let powderParticles = [];
+const MAX_POWDER_PARTICLES = 6500;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
@@ -149,26 +150,31 @@ function mergePiece() {
   });
 }
 
-function createPowder(boardX, boardY, color, particleCount = 100, persistent = true) {
+function createPowder(boardX, boardY, color, particleCount = 180, persistent = true) {
   const centerX = boardX * BLOCK_SIZE + BLOCK_SIZE / 2;
   const topY = boardY * BLOCK_SIZE;
-  const floorY = ROWS * BLOCK_SIZE - 3;
 
   for (let index = 0; index < particleCount; index += 1) {
+    const size = 3.5 + Math.random() * 2.5;
     powderParticles.push({
       x: centerX + (Math.random() - 0.5) * (BLOCK_SIZE - 4),
       y: topY - 10 + Math.random() * 6,
       vx: (Math.random() - 0.5) * 3.2,
       vy: 1.2 + Math.random() * 1.8,
-      size: 3.5 + Math.random() * 2.5,
+      size,
       color,
       life: 1,
-      floorY,
+      // Keep the entire particle inside the board so it visibly reaches its floor.
+      floorY: canvas.height - size - 1,
       persistent,
       cellX: boardX,
       cellY: boardY,
       settled: false,
     });
+  }
+
+  if (powderParticles.length > MAX_POWDER_PARTICLES) {
+    powderParticles.splice(0, powderParticles.length - MAX_POWDER_PARTICLES);
   }
 }
 
@@ -235,7 +241,7 @@ function clearLines() {
 
 function createLinePowder(rowY, color) {
   for (let x = 0; x < COLS; x += 1) {
-    createPowder(x, rowY, color, 8, false);
+    createPowder(x, rowY, color, 24, false);
   }
 }
 
