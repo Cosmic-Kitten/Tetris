@@ -391,7 +391,26 @@ canvas.addEventListener('touchend', (event) => {
 
 mobileButtons.forEach((button) => {
   button.addEventListener('click', () => applyAction(button.dataset.action));
+  button.addEventListener('pointerdown', (event) => {
+    event.preventDefault();
+    applyAction(button.dataset.action);
+  });
 });
+
+function startGame() {
+  resetGame();
+  startBtn.textContent = 'Restart Game';
+}
+
+startBtn.addEventListener('click', startGame);
+startBtn.addEventListener('pointerdown', (event) => {
+  event.preventDefault();
+  startGame();
+});
+startBtn.addEventListener('touchstart', (event) => {
+  event.preventDefault();
+  startGame();
+}, { passive: false });
 
 function update(timestamp) {
   if (isRunning && !isPaused && !gameOver) {
@@ -404,11 +423,6 @@ function update(timestamp) {
   drawBoard();
   requestAnimationFrame(update);
 }
-
-startBtn.addEventListener('click', () => {
-  resetGame();
-  startBtn.textContent = 'Restart Game';
-});
 
 document.addEventListener('keydown', handleKeydown);
 
