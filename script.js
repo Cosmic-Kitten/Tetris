@@ -149,10 +149,10 @@ function mergePiece() {
   });
 }
 
-function createPowder(boardX, boardY, color, particleCount = 40, persistent = true) {
+function createPowder(boardX, boardY, color, particleCount = 100, persistent = true) {
   const centerX = boardX * BLOCK_SIZE + BLOCK_SIZE / 2;
   const topY = boardY * BLOCK_SIZE;
-  const floorY = (boardY + 1) * BLOCK_SIZE - 2;
+  const floorY = ROWS * BLOCK_SIZE - 3;
 
   for (let index = 0; index < particleCount; index += 1) {
     powderParticles.push({
@@ -187,8 +187,8 @@ function updatePowder() {
     particle.x += particle.vx;
     particle.y += particle.vy;
 
-    const leftWall = Math.floor(particle.x / BLOCK_SIZE) * BLOCK_SIZE + 2;
-    const rightWall = leftWall + BLOCK_SIZE - particle.size - 4;
+    const leftWall = 2;
+    const rightWall = canvas.width - particle.size - 2;
 
     if (particle.x < leftWall || particle.x > rightWall) {
       particle.x = Math.max(leftWall, Math.min(particle.x, rightWall));
