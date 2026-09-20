@@ -52,7 +52,7 @@ let gameOver = false;
 let lastDropAt = 0;
 let dropInterval = 650;
 let powderParticles = [];
-const MAX_POWDER_PARTICLES = 18000;
+const MAX_POWDER_PARTICLES = 8000;
 const SAND_BIN_SIZE = 3;
 const SAND_BIN_COUNT = Math.ceil((COLS * BLOCK_SIZE) / SAND_BIN_SIZE);
 let sandHeights = new Float32Array(SAND_BIN_COUNT);
@@ -165,7 +165,7 @@ function createPiecePowder(piece) {
 
   if (!cells.length) return;
 
-  const grainsPerPiece = 900;
+  const grainsPerPiece = 360;
   for (let index = 0; index < grainsPerPiece; index += 1) {
     const cell = cells[Math.floor(Math.random() * cells.length)];
     createPowder(cell.x, cell.y, piece.color, 1);
