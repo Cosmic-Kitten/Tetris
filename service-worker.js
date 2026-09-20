@@ -1,9 +1,9 @@
-const CACHE_NAME = 'tetris-v1';
+const CACHE_NAME = 'tetris-v4';
 const ASSETS = [
   './',
   './index.html',
-  './style.css',
-  './script.js',
+  './style.css?v=4',
+  './script.js?v=4',
   './manifest.webmanifest',
   './icon.svg',
   './icon-192.png',

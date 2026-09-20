@@ -149,7 +149,7 @@ function mergePiece() {
   });
 }
 
-function createPowder(boardX, boardY, color, particleCount = 16, persistent = true) {
+function createPowder(boardX, boardY, color, particleCount = 40, persistent = true) {
   const centerX = boardX * BLOCK_SIZE + BLOCK_SIZE / 2;
   const topY = boardY * BLOCK_SIZE;
   const floorY = (boardY + 1) * BLOCK_SIZE - 2;
@@ -157,10 +157,10 @@ function createPowder(boardX, boardY, color, particleCount = 16, persistent = tr
   for (let index = 0; index < particleCount; index += 1) {
     powderParticles.push({
       x: centerX + (Math.random() - 0.5) * (BLOCK_SIZE - 4),
-      y: topY + 2 + Math.random() * 4,
-      vx: (Math.random() - 0.5) * 1.8,
-      vy: Math.random() * 0.6,
-      size: 2.5 + Math.random() * 2,
+      y: topY - 10 + Math.random() * 6,
+      vx: (Math.random() - 0.5) * 3.2,
+      vy: 1.2 + Math.random() * 1.8,
+      size: 3.5 + Math.random() * 2.5,
       color,
       life: 1,
       floorY,
@@ -499,7 +499,7 @@ document.addEventListener('keydown', handleKeydown);
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js').catch(() => {
+    navigator.serviceWorker.register('./service-worker.js?v=4').catch(() => {
       // Ignore registration errors; the game still works in the browser.
     });
   });
