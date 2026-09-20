@@ -231,8 +231,10 @@ function updatePowder() {
     if (particle.y >= surfaceY) {
       // Let grains roll down steep slopes before they settle, creating a mound.
       if (sandHeights[bin] > sandHeights[lowestNeighbor] + particle.size * 1.5) {
-        particle.x += lowestNeighbor < bin ? -SAND_BIN_SIZE : SAND_BIN_SIZE;
-        particle.vx = (lowestNeighbor < bin ? -1 : 1) * (0.35 + Math.random() * 0.55);
+        const direction = lowestNeighbor < bin ? -1 : 1;
+        const rolledX = particle.x + direction * SAND_BIN_SIZE;
+        particle.x = Math.max(leftWall, Math.min(rolledX, rightWall));
+        particle.vx = direction * (0.35 + Math.random() * 0.55);
         particle.y = Math.min(particle.y, canvas.height - particle.size - sandHeights[lowestNeighbor]);
         return;
       }
