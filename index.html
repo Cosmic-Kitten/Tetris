@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#0f172a" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
@@ -48,6 +48,19 @@
             <li>Space hard drop</li>
             <li>P pause</li>
           </ul>
+        </div>
+
+        <div class="mobile-controls" aria-label="Touch controls">
+          <div class="mobile-row">
+            <button type="button" data-action="left" aria-label="Move left">◀</button>
+            <button type="button" data-action="rotate" aria-label="Rotate">⟳</button>
+            <button type="button" data-action="right" aria-label="Move right">▶</button>
+          </div>
+          <div class="mobile-row">
+            <button type="button" data-action="down" aria-label="Soft drop">▼</button>
+            <button type="button" data-action="drop" aria-label="Hard drop">Drop</button>
+            <button type="button" data-action="pause" aria-label="Pause">Pause</button>
+          </div>
         </div>
       </aside>
     </main>

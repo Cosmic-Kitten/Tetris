@@ -12,16 +12,18 @@
 
 * {
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   margin: 0;
-  min-height: 100vh;
+  min-height: 100dvh;
   display: grid;
   place-items: center;
   background: linear-gradient(135deg, #0f172a, #111827 35%, #1e293b);
   color: var(--text);
   font-family: Arial, Helvetica, sans-serif;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
 }
 
 .game-shell {
@@ -33,6 +35,7 @@ body {
   border-radius: 18px;
   padding: 1.25rem;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  width: min(100%, 620px);
 }
 
 .board-wrap {
@@ -40,15 +43,19 @@ body {
   border: 3px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   overflow: hidden;
+  flex-shrink: 0;
 }
 
 canvas {
   display: block;
   background: var(--board-bg);
+  width: min(72vw, 300px);
+  height: auto;
+  touch-action: none;
 }
 
 .side-panel {
-  width: 220px;
+  width: min(100%, 220px);
 }
 
 h1 {
@@ -94,11 +101,11 @@ button {
   padding: 0.8rem 1rem;
   cursor: pointer;
   transition: transform 0.15s ease, filter 0.15s ease;
+  touch-action: manipulation;
 }
 
-button:hover {
-  filter: brightness(1.06);
-  transform: translateY(-1px);
+button:active {
+  transform: scale(0.98);
 }
 
 #status {
@@ -131,13 +138,44 @@ button:hover {
   color: var(--text);
 }
 
+.mobile-controls {
+  display: none;
+  grid-template-columns: 1fr;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+
+.mobile-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.mobile-controls button {
+  padding: 0.75rem 0.5rem;
+  min-height: 48px;
+}
+
 @media (max-width: 640px) {
+  body {
+    padding-top: max(0.5rem, env(safe-area-inset-top));
+  }
+
   .game-shell {
     flex-direction: column;
-    padding: 1rem;
+    padding: 0.9rem;
+    width: min(100%, 400px);
   }
 
   .side-panel {
     width: min(100%, 320px);
+  }
+
+  .controls {
+    display: none;
+  }
+
+  .mobile-controls {
+    display: grid;
   }
 }

@@ -9,6 +9,7 @@ const linesEl = document.getElementById('lines');
 const levelEl = document.getElementById('level');
 const statusEl = document.getElementById('status');
 const startBtn = document.getElementById('start-btn');
+const mobileButtons = document.querySelectorAll('[data-action]');
 
 const COLORS = {
   I: '#4dd0ff',
@@ -277,6 +278,47 @@ function togglePause() {
   statusEl.textContent = isPaused ? 'Paused' : 'Game running';
 }
 
+function applyAction(action) {
+  if (!isRunning && action !== 'drop') {
+    return;
+  }
+
+  if (action === 'pause') {
+    togglePause();
+    return;
+  }
+
+  if (isPaused) {
+    return;
+  }
+
+  switch (action) {
+    case 'left':
+      movePiece(-1, 0);
+      break;
+    case 'right':
+      movePiece(1, 0);
+      break;
+    case 'down':
+      movePiece(0, 1);
+      score += 1;
+      updateStats();
+      break;
+    case 'rotate':
+      rotatePiece();
+      break;
+    case 'drop':
+      if (!isRunning) {
+        resetGame();
+        return;
+      }
+      hardDrop();
+      break;
+    default:
+      break;
+  }
+}
+
 function handleKeydown(event) {
   const key = event.key;
 
@@ -302,26 +344,54 @@ function handleKeydown(event) {
 
   switch (key) {
     case 'ArrowLeft':
-      movePiece(-1, 0);
+      applyAction('left');
       break;
     case 'ArrowRight':
-      movePiece(1, 0);
+      applyAction('right');
       break;
     case 'ArrowDown':
-      movePiece(0, 1);
-      score += 1;
-      updateStats();
+      applyAction('down');
       break;
     case 'ArrowUp':
-      rotatePiece();
+      applyAction('rotate');
       break;
     case ' ':
-      hardDrop();
+      applyAction('drop');
       break;
     default:
       break;
   }
 }
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+canvas.addEventListener('touchstart', (event) => {
+  const touch = event.changedTouches[0];
+  touchStartX = touch.clientX;
+  touchStartY = touch.clientY;
+}, { passive: true });
+
+canvas.addEventListener('touchend', (event) => {
+  const touch = event.changedTouches[0];
+  const deltaX = touch.clientX - touchStartX;
+  const deltaY = touch.clientY - touchStartY;
+
+  if (Math.abs(deltaX) < 24 && Math.abs(deltaY) < 24) {
+    applyAction('rotate');
+    return;
+  }
+
+  if (Math.abs(deltaX) > Math.abs(deltaY)) {
+    applyAction(deltaX < 0 ? 'left' : 'right');
+  } else {
+    applyAction(deltaY < 0 ? 'rotate' : 'down');
+  }
+}, { passive: true });
+
+mobileButtons.forEach((button) => {
+  button.addEventListener('click', () => applyAction(button.dataset.action));
+});
 
 function update(timestamp) {
   if (isRunning && !isPaused && !gameOver) {
