@@ -1,4 +1,4 @@
-:root { --ink:#edf2ff; --muted:#8995b2; --line:rgba(180,200,255,.14); --purple:#8d6cff; --cyan:#4ee4ff; --board-size:min(82vw, calc((100dvh - 365px) / 2)); }
+:root { --ink:#edf2ff; --muted:#8995b2; --line:rgba(180,200,255,.14); --purple:#8d6cff; --cyan:#4ee4ff; --board-size:min(82vw, calc((100dvh - 360px) / 2)); }
 
 * {
   box-sizing: border-box;
@@ -76,7 +76,6 @@ h1 { margin:0; letter-spacing:.12em; font-size:clamp(1.5rem,5vw,2rem); line-heig
 h1 span { color:var(--cyan); font-size:.4em; vertical-align:top; margin-left:.1rem; }
 .board-header, .board-footer { position:absolute; left:11px; right:11px; display:flex; justify-content:space-between; color:#a7b3d4; font-size:.52rem; font-weight:800; letter-spacing:.12em; text-transform:uppercase; z-index:1; }
 .board-header { top:8px; }.board-footer { bottom:8px; color:#657196; letter-spacing:.05em; text-transform:none; }
-}
 
 .stats {
   display: grid;
@@ -213,6 +212,33 @@ button:active {
 .mobile-controls button {
   padding: 0.6rem 0.3rem;
   min-height: 40px;
+}
+
+@media (max-width: 640px) {
+  .game-shell { gap: .45rem; padding: .45rem .6rem; }
+  .side-panel { gap: .38rem; }
+  .brand { gap: .48rem; }
+  .brand-mark { grid-template-columns: repeat(2, 7px); gap: 2px; }
+  .brand-mark i { width: 7px; height: 7px; }
+  .eyebrow { font-size: .5rem; }
+  h1 { font-size: 1.45rem; }
+  .stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .35rem; }
+  .stat { padding: .38rem .25rem; gap: .12rem; }
+  .stat span { font-size: .5rem; letter-spacing: .06rem; }
+  .stat strong { font-size: .95rem; }
+  .palette { gap: .35rem; }
+  .palette-label { font-size: .5rem; }
+  .swatch { width: .58rem; height: .58rem; }
+  #start-btn { padding: .62rem .7rem; }
+  #status { min-height: 1rem; font-size: .68rem; }
+  .controls { display: none; }
+  .mobile-controls { gap: .28rem; }
+  .mobile-row { gap: .28rem; }
+  .mobile-controls button { min-height: 35px; padding: .45rem .25rem; font-size: .78rem; }
+  .board-wrap { border-radius: 13px; padding: 23px 7px 21px; }
+  .board-header, .board-footer { left: 10px; right: 10px; font-size: .48rem; }
+  .board-header { top: 6px; }
+  .board-footer { bottom: 6px; }
 }
 
 @media (min-width: 641px) {
