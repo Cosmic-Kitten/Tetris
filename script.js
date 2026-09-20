@@ -366,6 +366,20 @@ function drawGhostPiece() {
   ctx.restore();
 }
 
+function drawFallingPowderCell(x, y, color) {
+  const px = x * BLOCK_SIZE;
+  const py = y * BLOCK_SIZE;
+  ctx.fillStyle = color;
+
+  // A stable scatter pattern keeps the active piece readable without looking solid.
+  for (let grain = 0; grain < 22; grain += 1) {
+    const offsetX = (grain * 11 + x * 7 + y * 3) % 24 + 3;
+    const offsetY = (grain * 17 + x * 5 + y * 9) % 24 + 3;
+    const size = grain % 3 === 0 ? 3 : 2;
+    ctx.fillRect(px + offsetX, py + offsetY, size, size);
+  }
+}
+
 function drawBoard() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -390,7 +404,7 @@ function drawBoard() {
         const drawY = currentPiece.y + y;
 
         if (drawY >= 0) {
-          drawCell(drawX, drawY, currentPiece.color);
+          drawFallingPowderCell(drawX, drawY, currentPiece.color);
         }
       });
     });
