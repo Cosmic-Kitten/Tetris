@@ -260,16 +260,13 @@ function updatePowder() {
 }
 
 function recordSandEdge(particle) {
-  const row = Math.max(0, Math.min(ROWS - 1, Math.floor(particle.y / BLOCK_SIZE)));
   const column = Math.max(0, Math.min(COLS - 1, Math.floor(particle.x / BLOCK_SIZE)));
-  const rowsForColor = sandEdgeCoverage.get(particle.color) || new Map();
-  const coveredColumns = rowsForColor.get(row) || new Set();
+  const coveredColumns = sandEdgeCoverage.get(particle.color) || new Set();
 
   coveredColumns.add(column);
-  rowsForColor.set(row, coveredColumns);
-  sandEdgeCoverage.set(particle.color, rowsForColor);
+  sandEdgeCoverage.set(particle.color, coveredColumns);
 
-  // A color only needs to reach both walls on the same sand row to clear.
+  // A mountain is uneven, so the color may reach each wall at different heights.
   if (coveredColumns.has(0) && coveredColumns.has(COLS - 1)) {
     pendingSandClear = particle.color;
   }
@@ -463,6 +460,7 @@ function drawBoard() {
   }
 
   powderParticles.forEach((particle) => {
+    particle.x = Math.max(0, Math.min(particle.x, canvas.width - particle.size));
     ctx.globalAlpha = particle.life;
     ctx.fillStyle = particle.color;
     ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
