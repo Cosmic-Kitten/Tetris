@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0f172a" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="description" content="A classic Tetris game you can play in the browser or install as an app." />
+    <title>Tetris</title>
+    <link rel="icon" type="image/svg+xml" href="icon.svg" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <div class="board-wrap">
+        <canvas id="game" width="300" height="600" aria-label="Tetris board"></canvas>
+      </div>
+
+      <aside class="side-panel">
+        <h1>TETRIS</h1>
+
+        <div class="stats">
+          <div class="stat">
+            <span>Score</span>
+            <strong id="score">0</strong>
+          </div>
+          <div class="stat">
+            <span>Lines</span>
+            <strong id="lines">0</strong>
+          </div>
+          <div class="stat">
+            <span>Level</span>
+            <strong id="level">1</strong>
+          </div>
+        </div>
+
+        <button id="start-btn" type="button">Start Game</button>
+        <p id="status">Press start to play.</p>
+
+        <div class="controls">
+          <h2>Controls</h2>
+          <ul>
+            <li>← / → move</li>
+            <li>↑ rotate</li>
+            <li>↓ soft drop</li>
+            <li>Space hard drop</li>
+            <li>P pause</li>
+          </ul>
+        </div>
+      </aside>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
