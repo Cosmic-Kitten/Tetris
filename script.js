@@ -56,6 +56,8 @@ const MAX_POWDER_PARTICLES = 8000;
 const SAND_BIN_SIZE = 3;
 const SAND_BIN_COUNT = Math.ceil((COLS * BLOCK_SIZE) / SAND_BIN_SIZE);
 let sandHeights = new Float32Array(SAND_BIN_COUNT);
+let sandSurfaceColors = Array(COLS).fill(null);
+let pendingSandClear = null;
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
@@ -108,6 +110,8 @@ function resetGame() {
   lastDropAt = 0;
   powderParticles = [];
   sandHeights = new Float32Array(SAND_BIN_COUNT);
+  sandSurfaceColors = Array(COLS).fill(null);
+  pendingSandClear = null;
   statusEl.textContent = 'Game running';
   updateStats();
   spawnPiece();
@@ -127,9 +131,7 @@ function collides(piece, offsetX = 0, offsetY = 0, testMatrix = piece.matrix) {
         return true;
       }
 
-      if (newY >= 0 && board[newY][newX]) {
-        return true;
-      }
+      // Sand is visual material, not a hidden grid of solid collision blocks.
     }
   }
 
@@ -146,9 +148,7 @@ function mergePiece() {
       const boardY = currentPiece.y + y;
       const boardX = currentPiece.x + x;
 
-      if (boardY >= 0) {
-        board[boardY][boardX] = currentPiece.color;
-      }
+      if (boardY < 0) return;
     });
   });
 
@@ -246,9 +246,40 @@ function updatePowder() {
 
       if (particle.persistent) {
         sandHeights[bin] += particle.size * 0.82;
+        sandSurfaceColors[Math.min(COLS - 1, Math.floor(particle.x / BLOCK_SIZE))] = particle.color;
+
+        if (sandSurfaceColors.every((color) => color === particle.color)) {
+          pendingSandClear = particle.color;
+        }
       }
     }
   });
+
+  if (pendingSandClear) {
+    clearSandColor(pendingSandClear);
+    pendingSandClear = null;
+  }
+}
+
+function clearSandColor(color) {
+  powderParticles = powderParticles.filter((particle) => particle.color !== color);
+  sandHeights = new Float32Array(SAND_BIN_COUNT);
+  sandSurfaceColors = Array(COLS).fill(null);
+
+  // Let the remaining colors settle again into the space that just opened.
+  powderParticles.forEach((particle) => {
+    if (particle.persistent) {
+      particle.settled = false;
+      particle.vy = 0;
+    }
+  });
+
+  lines += 1;
+  score += 500 * level;
+  level = Math.floor(lines / 10) + 1;
+  dropInterval = Math.max(120, 650 - (level - 1) * 55);
+  updateStats();
+  statusEl.textContent = 'Color span cleared!';
 }
 
 function clearLines() {
