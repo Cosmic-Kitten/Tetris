@@ -144,10 +144,28 @@ function mergePiece() {
 
       if (boardY >= 0) {
         board[boardY][boardX] = currentPiece.color;
-        createPowder(boardX, boardY, currentPiece.color);
       }
     });
   });
+
+  // Treat a landed tetromino as one material burst, not four solid blocks.
+  createPiecePowder(currentPiece);
+}
+
+function createPiecePowder(piece) {
+  const cells = [];
+
+  piece.matrix.forEach((row, y) => row.forEach((value, x) => {
+    if (value) cells.push({ x: piece.x + x, y: piece.y + y });
+  }));
+
+  if (!cells.length) return;
+
+  const grainsPerPiece = 900;
+  for (let index = 0; index < grainsPerPiece; index += 1) {
+    const cell = cells[Math.floor(Math.random() * cells.length)];
+    createPowder(cell.x, cell.y, piece.color, 1);
+  }
 }
 
 function createPowder(boardX, boardY, color, particleCount = 180, persistent = true) {
@@ -353,7 +371,9 @@ function drawBoard() {
 
   for (let y = 0; y < ROWS; y += 1) {
     for (let x = 0; x < COLS; x += 1) {
-      drawCell(x, y, board[y][x]);
+      // The board still tracks collisions, but powder is the only visible
+      // material after a piece locks.
+      drawCell(x, y, null);
     }
   }
 
