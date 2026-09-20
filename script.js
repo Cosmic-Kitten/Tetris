@@ -499,9 +499,15 @@ document.addEventListener('keydown', handleKeydown);
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js?v=4').catch(() => {
+    navigator.serviceWorker.register('./service-worker.js?v=6').then((registration) => {
+      registration.update();
+    }).catch(() => {
       // Ignore registration errors; the game still works in the browser.
     });
+
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      window.location.reload();
+    }, { once: true });
   });
 }
 
