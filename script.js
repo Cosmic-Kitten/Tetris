@@ -149,7 +149,7 @@ function mergePiece() {
   });
 }
 
-function createPowder(boardX, boardY, color, particleCount = 5, persistent = true) {
+function createPowder(boardX, boardY, color, particleCount = 16, persistent = true) {
   const centerX = boardX * BLOCK_SIZE + BLOCK_SIZE / 2;
   const topY = boardY * BLOCK_SIZE;
   const floorY = (boardY + 1) * BLOCK_SIZE - 2;
@@ -165,6 +165,8 @@ function createPowder(boardX, boardY, color, particleCount = 5, persistent = tru
       life: 1,
       floorY,
       persistent,
+      cellX: boardX,
+      cellY: boardY,
       settled: false,
     });
   }
@@ -301,26 +303,6 @@ function hardDrop() {
 function drawCell(x, y, color) {
   ctx.fillStyle = color || '#0f172a';
   ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-  ctx.strokeRect(x * BLOCK_SIZE + 0.5, y * BLOCK_SIZE + 0.5, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
-}
-
-function drawPowderCell(x, y, color) {
-  drawCell(x, y, '#0b1220');
-  ctx.fillStyle = color;
-
-  for (let grain = 0; grain < 16; grain += 1) {
-    const seed = (x * 37 + y * 61 + grain * 17) % 100;
-    const grainX = x * BLOCK_SIZE + 3 + ((seed * 11) % 24);
-    const grainY = y * BLOCK_SIZE + 3 + ((seed * 7 + grain * 3) % 24);
-    const grainSize = grain % 4 === 0 ? 3 : 2;
-    ctx.globalAlpha = 0.7 + (grain % 3) * 0.1;
-    ctx.fillRect(grainX, grainY, grainSize, grainSize);
-  }
-
-  ctx.globalAlpha = 1;
-  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-  ctx.strokeRect(x * BLOCK_SIZE + 0.5, y * BLOCK_SIZE + 0.5, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
 }
 
 function drawBoard() {
@@ -328,11 +310,7 @@ function drawBoard() {
 
   for (let y = 0; y < ROWS; y += 1) {
     for (let x = 0; x < COLS; x += 1) {
-      if (board[y][x]) {
-        drawPowderCell(x, y, board[y][x]);
-      } else {
-        drawCell(x, y, '#0b1220');
-      }
+      drawCell(x, y, '#0b1220');
     }
   }
 
