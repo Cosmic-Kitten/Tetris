@@ -14,10 +14,6 @@
   </head>
   <body>
     <main class="game-shell">
-      <div class="board-wrap">
-        <canvas id="game" width="300" height="600" aria-label="Tetris board"></canvas>
-      </div>
-
       <aside class="side-panel">
         <h1>TETRIS</h1>
 
@@ -36,8 +32,20 @@
           </div>
         </div>
 
+        <div class="palette" aria-label="Game color palette">
+          <span class="swatch swatch-cyan" aria-label="Cyan"></span>
+          <span class="swatch swatch-gold" aria-label="Gold"></span>
+          <span class="swatch swatch-violet" aria-label="Violet"></span>
+          <span class="swatch swatch-green" aria-label="Green"></span>
+        </div>
+
         <button id="start-btn" type="button">Start Game</button>
         <p id="status">Press start to play.</p>
+      </aside>
+
+      <div class="board-wrap">
+        <canvas id="game" width="300" height="600" aria-label="Tetris board"></canvas>
+      </div>
 
         <div class="controls">
           <h2>Controls</h2>

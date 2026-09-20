@@ -11,15 +11,7 @@ const statusEl = document.getElementById('status');
 const startBtn = document.getElementById('start-btn');
 const mobileButtons = document.querySelectorAll('[data-action]');
 
-const COLORS = {
-  I: '#4dd0ff',
-  O: '#ffd166',
-  T: '#c084fc',
-  S: '#4ade80',
-  Z: '#f87171',
-  J: '#60a5fa',
-  L: '#fb923c',
-};
+const COLORS = ['#4dd0ff', '#ffd166', '#c084fc', '#4ade80'];
 
 const SHAPES = {
   I: [[1, 1, 1, 1]],
@@ -59,6 +51,7 @@ let isPaused = false;
 let gameOver = false;
 let lastDropAt = 0;
 let dropInterval = 650;
+let powderParticles = [];
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
@@ -69,7 +62,8 @@ function cloneMatrix(matrix) {
 }
 
 function randomPiece() {
-  const type = Object.keys(SHAPES)[Math.floor(Math.random() * Object.keys(SHAPES).length)];
+  const pieceTypes = Object.keys(SHAPES);
+  const type = pieceTypes[Math.floor(Math.random() * pieceTypes.length)];
   const matrix = cloneMatrix(SHAPES[type]);
 
   return {
@@ -77,7 +71,7 @@ function randomPiece() {
     matrix,
     x: Math.floor((COLS - matrix[0].length) / 2),
     y: 0,
-    color: COLORS[type],
+    color: COLORS[Math.floor(Math.random() * COLORS.length)],
   };
 }
 
@@ -108,6 +102,7 @@ function resetGame() {
   isRunning = true;
   isPaused = false;
   lastDropAt = 0;
+  powderParticles = [];
   statusEl.textContent = 'Game running';
   updateStats();
   spawnPiece();
@@ -148,8 +143,37 @@ function mergePiece() {
 
       if (boardY >= 0) {
         board[boardY][boardX] = currentPiece.color;
+        createPowder(boardX, boardY, currentPiece.color);
       }
     });
+  });
+}
+
+function createPowder(boardX, boardY, color) {
+  const centerX = boardX * BLOCK_SIZE + BLOCK_SIZE / 2;
+  const centerY = boardY * BLOCK_SIZE + BLOCK_SIZE / 2;
+
+  for (let index = 0; index < 5; index += 1) {
+    powderParticles.push({
+      x: centerX + (Math.random() - 0.5) * BLOCK_SIZE,
+      y: centerY + (Math.random() - 0.5) * BLOCK_SIZE,
+      vx: (Math.random() - 0.5) * 1.8,
+      vy: -Math.random() * 2.4,
+      size: 1.5 + Math.random() * 2,
+      color,
+      life: 1,
+    });
+  }
+}
+
+function updatePowder() {
+  powderParticles = powderParticles.filter((particle) => particle.life > 0);
+
+  powderParticles.forEach((particle) => {
+    particle.x += particle.vx;
+    particle.y += particle.vy;
+    particle.vy += 0.12;
+    particle.life -= 0.025;
   });
 }
 
@@ -267,6 +291,13 @@ function drawBoard() {
       });
     });
   }
+
+  powderParticles.forEach((particle) => {
+    ctx.globalAlpha = particle.life;
+    ctx.fillStyle = particle.color;
+    ctx.fillRect(particle.x, particle.y, particle.size, particle.size);
+  });
+  ctx.globalAlpha = 1;
 }
 
 function togglePause() {
@@ -420,6 +451,7 @@ function update(timestamp) {
     }
   }
 
+  updatePowder();
   drawBoard();
   requestAnimationFrame(update);
 }
