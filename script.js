@@ -301,8 +301,47 @@ function hardDrop() {
 }
 
 function drawCell(x, y, color) {
-  ctx.fillStyle = color || '#0f172a';
-  ctx.fillRect(x * BLOCK_SIZE, y * BLOCK_SIZE, BLOCK_SIZE, BLOCK_SIZE);
+  const px = x * BLOCK_SIZE;
+  const py = y * BLOCK_SIZE;
+  const inset = color ? 2 : 0;
+
+  if (!color) {
+    ctx.fillStyle = '#080c1c';
+    ctx.fillRect(px, py, BLOCK_SIZE, BLOCK_SIZE);
+    ctx.strokeStyle = 'rgba(140, 165, 255, 0.075)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(px + 0.5, py + 0.5, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+    return;
+  }
+
+  ctx.save();
+  ctx.shadowColor = color;
+  ctx.shadowBlur = 13;
+  const fill = ctx.createLinearGradient(px, py, px + BLOCK_SIZE, py + BLOCK_SIZE);
+  fill.addColorStop(0, '#ffffff');
+  fill.addColorStop(0.07, color);
+  fill.addColorStop(1, color);
+  ctx.fillStyle = fill;
+  ctx.fillRect(px + inset, py + inset, BLOCK_SIZE - inset * 2, BLOCK_SIZE - inset * 2);
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.26)';
+  ctx.fillRect(px + inset + 2, py + inset + 2, BLOCK_SIZE - inset * 2 - 4, 2);
+  ctx.strokeStyle = 'rgba(7, 13, 36, 0.38)';
+  ctx.strokeRect(px + inset + 0.5, py + inset + 0.5, BLOCK_SIZE - inset * 2 - 1, BLOCK_SIZE - inset * 2 - 1);
+  ctx.restore();
+}
+
+function drawGhostPiece() {
+  if (!currentPiece || !isRunning || isPaused) return;
+  let ghostY = currentPiece.y;
+  while (!collides({ ...currentPiece, y: ghostY }, 0, 1)) ghostY += 1;
+  if (ghostY === currentPiece.y) return;
+  ctx.save();
+  ctx.globalAlpha = 0.22;
+  currentPiece.matrix.forEach((row, y) => row.forEach((value, x) => {
+    if (value && ghostY + y >= 0) drawCell(currentPiece.x + x, ghostY + y, currentPiece.color);
+  }));
+  ctx.restore();
 }
 
 function drawBoard() {
@@ -310,9 +349,11 @@ function drawBoard() {
 
   for (let y = 0; y < ROWS; y += 1) {
     for (let x = 0; x < COLS; x += 1) {
-      drawCell(x, y, '#0b1220');
+      drawCell(x, y, board[y][x]);
     }
   }
+
+  drawGhostPiece();
 
   if (currentPiece) {
     currentPiece.matrix.forEach((row, y) => {

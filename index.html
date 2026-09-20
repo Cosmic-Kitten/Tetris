@@ -10,15 +10,21 @@
     <title>Tetris</title>
     <link rel="icon" type="image/svg+xml" href="icon.svg" />
     <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="stylesheet" href="style.css?v=7" />
+    <link rel="stylesheet" href="style.css?v=8" />
   </head>
   <body>
     <main class="game-shell">
       <aside class="side-panel">
-        <h1>TETRIS</h1>
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          <div>
+            <p class="eyebrow">Arcade series · 01</p>
+            <h1>TETRIS<span>®</span></h1>
+          </div>
+        </div>
 
         <div class="stats">
-          <div class="stat">
+          <div class="stat score-stat">
             <span>Score</span>
             <strong id="score">0</strong>
           </div>
@@ -33,14 +39,15 @@
         </div>
 
         <div class="palette" aria-label="Game color palette">
+          <span class="palette-label">Neon stack</span>
           <span class="swatch swatch-cyan" aria-label="Cyan"></span>
           <span class="swatch swatch-gold" aria-label="Gold"></span>
           <span class="swatch swatch-violet" aria-label="Violet"></span>
           <span class="swatch swatch-green" aria-label="Green"></span>
         </div>
 
-        <button id="start-btn" type="button">Start Game</button>
-        <p id="status">Press start to play.</p>
+        <button id="start-btn" type="button"><span>Start game</span><b>↵</b></button>
+        <p id="status"><span class="status-dot"></span>Press start to play.</p>
 
         <div class="controls">
           <h2>Controls</h2>
@@ -68,10 +75,12 @@
       </aside>
 
       <div class="board-wrap">
+        <div class="board-header"><span>Field</span><span>10 × 20</span></div>
         <canvas id="game" width="300" height="600" aria-label="Tetris board"></canvas>
+        <div class="board-footer"><span>Clear lines. Chase flow.</span><span>v1.0</span></div>
       </div>
     </main>
 
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=8"></script>
   </body>
 </html>
