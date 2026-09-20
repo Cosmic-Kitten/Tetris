@@ -1,9 +1,9 @@
-const CACHE_NAME = 'tetris-v7';
+const CACHE_NAME = 'tetris-v10';
 const ASSETS = [
   './',
   './index.html',
-  './style.css?v=7',
-  './script.js?v=7',
+  './style.css?v=10',
+  './script.js?v=10',
   './manifest.webmanifest',
   './icon.svg',
   './icon-192.png',
@@ -48,7 +48,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Source files must update immediately after a deployment. Keep a cached
+  // fallback for offline play, but never let it win over the current version.
   event.respondWith(
-    caches.match(event.request).then((cached) => cached || fetch(event.request))
+    fetch(event.request)
+      .then((response) => {
+        const responseClone = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });

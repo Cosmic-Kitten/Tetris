@@ -544,7 +544,7 @@ document.addEventListener('keydown', handleKeydown);
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js?v=7').then((registration) => {
+    navigator.serviceWorker.register('./service-worker.js?v=10').then((registration) => {
       registration.update();
     }).catch(() => {
       // Ignore registration errors; the game still works in the browser.
