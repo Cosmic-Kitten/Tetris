@@ -1,0 +1,24 @@
+{
+  "name": "tetris",
+  "version": "1.0.0",
+  "description": "A simple browser-based Tetris game built with HTML, CSS, and JavaScript.",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Cosmic-Kitten/Tetris.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Cosmic-Kitten/Tetris/issues"
+  },
+  "homepage": "https://github.com/Cosmic-Kitten/Tetris#readme",
+  "dependencies": {
+    "playwright": "^1.63.0"
+  }
+}

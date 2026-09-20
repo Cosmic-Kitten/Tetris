@@ -76,7 +76,7 @@ function randomPiece() {
     type,
     matrix,
     x: Math.floor((COLS - matrix[0].length) / 2),
-    y: -1,
+    y: 0,
     color: COLORS[type],
   };
 }
@@ -420,6 +420,7 @@ if ('serviceWorker' in navigator) {
   });
 }
 
+board = createBoard();
 updateStats();
 drawBoard();
 requestAnimationFrame(update);
