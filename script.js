@@ -160,7 +160,7 @@ function createPowder(boardX, boardY, color, particleCount = 5) {
       y: topY + 2 + Math.random() * 4,
       vx: (Math.random() - 0.5) * 1.8,
       vy: Math.random() * 0.6,
-      size: 1.5 + Math.random() * 2,
+      size: 2.5 + Math.random() * 2,
       color,
       life: 1,
       floorY,
@@ -174,7 +174,7 @@ function updatePowder() {
 
   powderParticles.forEach((particle) => {
     if (particle.settled) {
-      particle.life -= 0.006;
+      particle.life -= 0.003;
       return;
     }
 
@@ -302,12 +302,34 @@ function drawCell(x, y, color) {
   ctx.strokeRect(x * BLOCK_SIZE + 0.5, y * BLOCK_SIZE + 0.5, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
 }
 
+function drawPowderCell(x, y, color) {
+  drawCell(x, y, '#0b1220');
+  ctx.fillStyle = color;
+
+  for (let grain = 0; grain < 16; grain += 1) {
+    const seed = (x * 37 + y * 61 + grain * 17) % 100;
+    const grainX = x * BLOCK_SIZE + 3 + ((seed * 11) % 24);
+    const grainY = y * BLOCK_SIZE + 3 + ((seed * 7 + grain * 3) % 24);
+    const grainSize = grain % 4 === 0 ? 3 : 2;
+    ctx.globalAlpha = 0.7 + (grain % 3) * 0.1;
+    ctx.fillRect(grainX, grainY, grainSize, grainSize);
+  }
+
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.strokeRect(x * BLOCK_SIZE + 0.5, y * BLOCK_SIZE + 0.5, BLOCK_SIZE - 1, BLOCK_SIZE - 1);
+}
+
 function drawBoard() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   for (let y = 0; y < ROWS; y += 1) {
     for (let x = 0; x < COLS; x += 1) {
-      drawCell(x, y, board[y][x] || '#0b1220');
+      if (board[y][x]) {
+        drawPowderCell(x, y, board[y][x]);
+      } else {
+        drawCell(x, y, '#0b1220');
+      }
     }
   }
 
