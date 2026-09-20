@@ -149,19 +149,22 @@ function mergePiece() {
   });
 }
 
-function createPowder(boardX, boardY, color) {
+function createPowder(boardX, boardY, color, particleCount = 5) {
   const centerX = boardX * BLOCK_SIZE + BLOCK_SIZE / 2;
-  const centerY = boardY * BLOCK_SIZE + BLOCK_SIZE / 2;
+  const topY = boardY * BLOCK_SIZE;
+  const floorY = (boardY + 1) * BLOCK_SIZE - 2;
 
-  for (let index = 0; index < 5; index += 1) {
+  for (let index = 0; index < particleCount; index += 1) {
     powderParticles.push({
-      x: centerX + (Math.random() - 0.5) * BLOCK_SIZE,
-      y: centerY + (Math.random() - 0.5) * BLOCK_SIZE,
+      x: centerX + (Math.random() - 0.5) * (BLOCK_SIZE - 4),
+      y: topY + 2 + Math.random() * 4,
       vx: (Math.random() - 0.5) * 1.8,
-      vy: -Math.random() * 2.4,
+      vy: Math.random() * 0.6,
       size: 1.5 + Math.random() * 2,
       color,
       life: 1,
+      floorY,
+      settled: false,
     });
   }
 }
@@ -170,10 +173,33 @@ function updatePowder() {
   powderParticles = powderParticles.filter((particle) => particle.life > 0);
 
   powderParticles.forEach((particle) => {
+    if (particle.settled) {
+      particle.life -= 0.006;
+      return;
+    }
+
+    particle.vy += 0.18;
     particle.x += particle.vx;
     particle.y += particle.vy;
-    particle.vy += 0.12;
-    particle.life -= 0.025;
+
+    const leftWall = Math.floor(particle.x / BLOCK_SIZE) * BLOCK_SIZE + 2;
+    const rightWall = leftWall + BLOCK_SIZE - particle.size - 4;
+
+    if (particle.x < leftWall || particle.x > rightWall) {
+      particle.x = Math.max(leftWall, Math.min(particle.x, rightWall));
+      particle.vx *= -0.45;
+    }
+
+    if (particle.y >= particle.floorY) {
+      particle.y = particle.floorY;
+      particle.vy *= -0.28;
+      particle.vx *= 0.82;
+
+      if (Math.abs(particle.vy) < 0.35) {
+        particle.settled = true;
+        particle.life = 1;
+      }
+    }
   });
 }
 
@@ -181,7 +207,11 @@ function clearLines() {
   let cleared = 0;
 
   for (let y = ROWS - 1; y >= 0; y -= 1) {
-    if (board[y].every(Boolean)) {
+    const rowColor = board[y][0];
+    const isSingleColorRow = rowColor && board[y].every((cell) => cell === rowColor);
+
+    if (isSingleColorRow) {
+      createLinePowder(y, rowColor);
       board.splice(y, 1);
       board.unshift(Array(COLS).fill(null));
       cleared += 1;
@@ -195,6 +225,12 @@ function clearLines() {
     level = Math.floor(lines / 10) + 1;
     dropInterval = Math.max(120, 650 - (level - 1) * 55);
     updateStats();
+  }
+}
+
+function createLinePowder(rowY, color) {
+  for (let x = 0; x < COLS; x += 1) {
+    createPowder(x, rowY, color, 8);
   }
 }
 
