@@ -10,7 +10,7 @@
     <title>Tetris</title>
     <link rel="icon" type="image/svg+xml" href="icon.svg" />
     <link rel="manifest" href="manifest.webmanifest" />
-    <link rel="stylesheet" href="style.css?v=6" />
+    <link rel="stylesheet" href="style.css?v=7" />
   </head>
   <body>
     <main class="game-shell">
@@ -41,11 +41,6 @@
 
         <button id="start-btn" type="button">Start Game</button>
         <p id="status">Press start to play.</p>
-      </aside>
-
-      <div class="board-wrap">
-        <canvas id="game" width="300" height="600" aria-label="Tetris board"></canvas>
-      </div>
 
         <div class="controls">
           <h2>Controls</h2>
@@ -71,8 +66,12 @@
           </div>
         </div>
       </aside>
+
+      <div class="board-wrap">
+        <canvas id="game" width="300" height="600" aria-label="Tetris board"></canvas>
+      </div>
     </main>
 
-    <script src="script.js?v=6"></script>
+    <script src="script.js?v=7"></script>
   </body>
 </html>
