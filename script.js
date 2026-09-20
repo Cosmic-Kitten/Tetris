@@ -149,7 +149,7 @@ function mergePiece() {
   });
 }
 
-function createPowder(boardX, boardY, color, particleCount = 5) {
+function createPowder(boardX, boardY, color, particleCount = 5, persistent = true) {
   const centerX = boardX * BLOCK_SIZE + BLOCK_SIZE / 2;
   const topY = boardY * BLOCK_SIZE;
   const floorY = (boardY + 1) * BLOCK_SIZE - 2;
@@ -164,6 +164,7 @@ function createPowder(boardX, boardY, color, particleCount = 5) {
       color,
       life: 1,
       floorY,
+      persistent,
       settled: false,
     });
   }
@@ -174,7 +175,9 @@ function updatePowder() {
 
   powderParticles.forEach((particle) => {
     if (particle.settled) {
-      particle.life -= 0.003;
+      if (!particle.persistent) {
+        particle.life -= 0.02;
+      }
       return;
     }
 
@@ -230,7 +233,7 @@ function clearLines() {
 
 function createLinePowder(rowY, color) {
   for (let x = 0; x < COLS; x += 1) {
-    createPowder(x, rowY, color, 8);
+    createPowder(x, rowY, color, 8, false);
   }
 }
 
