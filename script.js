@@ -52,7 +52,10 @@ let gameOver = false;
 let lastDropAt = 0;
 let dropInterval = 650;
 let powderParticles = [];
-const MAX_POWDER_PARTICLES = 6500;
+const MAX_POWDER_PARTICLES = 18000;
+const SAND_BIN_SIZE = 3;
+const SAND_BIN_COUNT = Math.ceil((COLS * BLOCK_SIZE) / SAND_BIN_SIZE);
+let sandHeights = new Float32Array(SAND_BIN_COUNT);
 
 function createBoard() {
   return Array.from({ length: ROWS }, () => Array(COLS).fill(null));
@@ -104,6 +107,7 @@ function resetGame() {
   isPaused = false;
   lastDropAt = 0;
   powderParticles = [];
+  sandHeights = new Float32Array(SAND_BIN_COUNT);
   statusEl.textContent = 'Game running';
   updateStats();
   spawnPiece();
@@ -218,14 +222,31 @@ function updatePowder() {
       particle.vx *= -0.45;
     }
 
-    const floorY = canvas.height - particle.size;
-    if (particle.y >= floorY) {
-      // Stop at the actual canvas edge—no bounce or partially clipped particles.
-      particle.y = floorY;
+    const bin = Math.max(0, Math.min(SAND_BIN_COUNT - 1, Math.floor(particle.x / SAND_BIN_SIZE)));
+    const leftBin = Math.max(0, bin - 1);
+    const rightBin = Math.min(SAND_BIN_COUNT - 1, bin + 1);
+    const lowestNeighbor = sandHeights[leftBin] < sandHeights[rightBin] ? leftBin : rightBin;
+    const surfaceY = canvas.height - particle.size - sandHeights[bin];
+
+    if (particle.y >= surfaceY) {
+      // Let grains roll down steep slopes before they settle, creating a mound.
+      if (sandHeights[bin] > sandHeights[lowestNeighbor] + particle.size * 1.5) {
+        particle.x += lowestNeighbor < bin ? -SAND_BIN_SIZE : SAND_BIN_SIZE;
+        particle.vx = (lowestNeighbor < bin ? -1 : 1) * (0.35 + Math.random() * 0.55);
+        particle.y = Math.min(particle.y, canvas.height - particle.size - sandHeights[lowestNeighbor]);
+        return;
+      }
+
+      particle.y = surfaceY;
       particle.vy = 0;
-      particle.vx *= 0.72;
+      particle.vx *= 0.45;
       particle.settled = true;
       particle.life = 1;
+      particle.pileBin = bin;
+
+      if (particle.persistent) {
+        sandHeights[bin] += particle.size * 0.82;
+      }
     }
   });
 }
