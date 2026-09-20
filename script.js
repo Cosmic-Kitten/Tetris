@@ -56,7 +56,7 @@ const MAX_POWDER_PARTICLES = 8000;
 const SAND_BIN_SIZE = 3;
 const SAND_BIN_COUNT = Math.ceil((COLS * BLOCK_SIZE) / SAND_BIN_SIZE);
 let sandHeights = new Float32Array(SAND_BIN_COUNT);
-let sandSurfaceColors = Array(COLS).fill(null);
+let sandEdgeCoverage = new Map();
 let pendingSandClear = null;
 
 function createBoard() {
@@ -110,7 +110,7 @@ function resetGame() {
   lastDropAt = 0;
   powderParticles = [];
   sandHeights = new Float32Array(SAND_BIN_COUNT);
-  sandSurfaceColors = Array(COLS).fill(null);
+  sandEdgeCoverage = new Map();
   pendingSandClear = null;
   statusEl.textContent = 'Game running';
   updateStats();
@@ -246,11 +246,7 @@ function updatePowder() {
 
       if (particle.persistent) {
         sandHeights[bin] += particle.size * 0.82;
-        sandSurfaceColors[Math.min(COLS - 1, Math.floor(particle.x / BLOCK_SIZE))] = particle.color;
-
-        if (sandSurfaceColors.every((color) => color === particle.color)) {
-          pendingSandClear = particle.color;
-        }
+        recordSandEdge(particle);
       }
     }
   });
@@ -261,10 +257,26 @@ function updatePowder() {
   }
 }
 
+function recordSandEdge(particle) {
+  const row = Math.max(0, Math.min(ROWS - 1, Math.floor(particle.y / BLOCK_SIZE)));
+  const column = Math.max(0, Math.min(COLS - 1, Math.floor(particle.x / BLOCK_SIZE)));
+  const rowsForColor = sandEdgeCoverage.get(particle.color) || new Map();
+  const coveredColumns = rowsForColor.get(row) || new Set();
+
+  coveredColumns.add(column);
+  rowsForColor.set(row, coveredColumns);
+  sandEdgeCoverage.set(particle.color, rowsForColor);
+
+  // A color only needs to reach both walls on the same sand row to clear.
+  if (coveredColumns.has(0) && coveredColumns.has(COLS - 1)) {
+    pendingSandClear = particle.color;
+  }
+}
+
 function clearSandColor(color) {
   powderParticles = powderParticles.filter((particle) => particle.color !== color);
   sandHeights = new Float32Array(SAND_BIN_COUNT);
-  sandSurfaceColors = Array(COLS).fill(null);
+  sandEdgeCoverage = new Map();
 
   // Let the remaining colors settle again into the space that just opened.
   powderParticles.forEach((particle) => {
